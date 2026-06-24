@@ -9,7 +9,21 @@ def get_video_info(url):
         "quiet": True,
 
         "format":
-        "best[ext=mp4]/best"
+        "best[ext=mp4]/best",
+
+        "nocheckcertificate": True,
+
+        "extractor_args": {
+
+            "youtube": {
+
+                "player_client": [
+                    "android"
+                ]
+
+            }
+
+        }
 
     }
 
@@ -22,6 +36,7 @@ def get_video_info(url):
             url,
             download=False
         )
+
 
 
     size = info.get(
