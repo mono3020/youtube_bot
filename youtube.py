@@ -13,12 +13,19 @@ def get_video_info(url):
 
         "nocheckcertificate": True,
 
+        "http_headers": {
+
+            "User-Agent":
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+
+        },
+
         "extractor_args": {
 
             "youtube": {
 
                 "player_client": [
-                    "android"
+                    "web"
                 ]
 
             }
@@ -36,7 +43,6 @@ def get_video_info(url):
             url,
             download=False
         )
-
 
 
     size = info.get(
@@ -62,10 +68,8 @@ def get_video_info(url):
         "title":
         info.get("title"),
 
-
         "download_url":
         info.get("url"),
-
 
         "size":
         mb
