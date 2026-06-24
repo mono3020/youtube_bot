@@ -15,11 +15,16 @@ ROOM_ID = "439704308"
 
 def send_message(text):
 
-    url = f"https://api.chatwork.com/v2/rooms/{ROOM_ID}/messages"
+    url = (
+        f"https://api.chatwork.com/v2/"
+        f"rooms/{ROOM_ID}/messages"
+    )
+
 
     headers = {
         "X-ChatWorkToken": CHATWORK_TOKEN
     }
+
 
     requests.post(
         url,
@@ -30,11 +35,11 @@ def send_message(text):
     )
 
 
+
 @app.route("/webhook", methods=["POST"])
 def webhook():
 
     data = request.json
-
 
     message = data["webhook_event"]["body"]
 
@@ -47,7 +52,12 @@ def webhook():
 
     for url in urls:
 
-        if "youtube.com" in url or "youtu.be" in url:
+
+        if (
+            "youtube.com" in url
+            or "youtu.be" in url
+        ):
+
 
             try:
 
@@ -55,13 +65,21 @@ def webhook():
 
 
                 send_message(
-f"""YouTube動画を確認しました！
+f"""
+🎬 YouTube取得完了
 
 タイトル:
 {info['title']}
 
-リンク:
-{info['url']}
+形式:
+MP4
+
+サイズ:
+{info['size']} MB
+
+
+ダウンロード:
+{info['download_url']}
 """
                 )
 
@@ -69,7 +87,7 @@ f"""YouTube動画を確認しました！
             except Exception as e:
 
                 send_message(
-                    "動画取得に失敗しました"
+                    f"動画取得失敗\n{e}"
                 )
 
 
