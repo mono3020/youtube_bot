@@ -1,20 +1,103 @@
-import yt_dlp
+from flask import Flask, request
+import requests
+import re
+
+from youtube import get_video_info
 
 
-def get_video_info(url):
+app = Flask(__name__)
 
-    options = {
-        "quiet": True,
-        "skip_download": True
+
+CHATWORK_TOKEN = "8f2bcd6c8125f5985155de27217b3585"
+
+ROOM_ID = "439704308"
+
+
+
+def send_message(text):
+
+    url = (
+        f"https://api.chatwork.com/v2/"
+        f"rooms/{ROOM_ID}/messages"
+    )
+
+
+    headers = {
+        "X-ChatWorkToken": CHATWORK_TOKEN
     }
 
-    with yt_dlp.YoutubeDL(options) as ydl:
-        info = ydl.extract_info(
-            url,
-            download=False
-        )
 
-    return {
-        "title": info.get("title"),
-        "url": url
-    }
+    requests.post(
+        url,
+        headers=headers,
+        data={
+            "body": text
+        }
+    )
+
+
+
+
+@app.route("/webhook", methods=["POST"])
+def webhook():
+
+
+    data = request.json
+
+
+    message = (
+        data["webhook_event"]["body"]
+    )
+
+
+    urls = re.findall(
+        r"https?://[^\s]+",
+        message
+    )
+
+
+
+    for url in urls:
+
+
+        if (
+            "youtube.com" in url
+            or "youtu.be" in url
+        ):
+
+
+            try:
+
+                info = get_video_info(url)
+
+
+
+                send_message(
+f"""
+YouTube動画を確認しました！
+
+タイトル:
+{info['title']}
+
+
+ダウンロードリンク:
+{info['download_url']}
+"""
+                )
+
+
+
+            except Exception:
+
+                send_message(
+                    "動画取得に失敗しました"
+                )
+
+
+
+    return "ok"
+
+
+
+if __name__ == "__main__":
+    app.run()
