@@ -1,4 +1,4 @@
 flask
 requests
-yt-dlp>=2026.06.25
+yt-dlp
 gunicorn
